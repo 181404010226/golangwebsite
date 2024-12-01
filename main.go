@@ -7,7 +7,6 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
-
 	"your-project/handlers"
 
 	"github.com/gorilla/mux"
