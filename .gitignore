@@ -1,0 +1,41 @@
+# Go specific
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+go.work
+
+# IDE specific
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+
+# Environment files
+.env
+*.env
+.env.local
+.env.development
+.env.test
+.env.production
+
+# Project specific
+/meeting-app/
+/bin/
+/tmp/
+/vendor/
+
+# Shell scripts
+*.sh
+
+# Logs
+*.log
+logs/
+
+# Build output
+/dist/
+/build/ 

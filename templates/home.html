@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Home</title>
+    <style>
+        .avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+        }
+    </style>
+</head>
+<body>
+    {{if .User}}
+        <h1>Welcome, {{.User}}!</h1>
+        {{if .AvatarURL}}
+            <img src="{{.AvatarURL}}" alt="User Avatar" class="avatar">
+        {{end}}
+        <a href="/logout">Logout</a>
+    {{else}}
+        <h1>You are not logged in.</h1>
+        <a href="/login">Login with GitHub</a>
+    {{end}}
+</body>
+</html>
