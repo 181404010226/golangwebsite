@@ -1,18 +1,40 @@
-# 依赖目录
-node_modules/
-dist/
+# Go specific
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+go.work
 
-# 环境文件
-.env
-.env.local
-
-# IDE配置文件
+# IDE specific
 .idea/
 .vscode/
-
-# 操作系统文件
+*.swp
+*.swo
 .DS_Store
-Thumbs.db
 
-# 日志文件
-*.log 
+# Environment files
+.env
+*.env
+.env.local
+.env.development
+.env.test
+.env.production
+
+# Project specific
+/bin/
+/tmp/
+/vendor/
+
+# Shell scripts
+*.sh
+
+# Logs
+*.log
+logs/
+
+# Build output
+/dist/
+/build/ 
