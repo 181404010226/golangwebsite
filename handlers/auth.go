@@ -22,14 +22,14 @@ var (
 
 // InitStore initializes the session store
 func InitStore() {
-    store = sessions.NewCookieStore([]byte(os.Getenv("SESSION_KEY")))
-    store.Options = &sessions.Options{
-        Path:     "/",
-        MaxAge:   86400 * 7,
-        HttpOnly: true,
-        Secure:   true,
-        SameSite: http.SameSiteNoneMode,  // 允许跨站点 cookie
-    }
+	store = sessions.NewCookieStore([]byte(os.Getenv("SESSION_KEY")))
+	store.Options = &sessions.Options{
+		Path:     "/",
+		MaxAge:   86400 * 7,
+		HttpOnly: true,
+		Secure:   true,
+		SameSite: http.SameSiteNoneMode, // 允许跨站点 cookie
+	}
 }
 
 // InitOAuth 初始化 OAuth 配置
@@ -125,7 +125,7 @@ func GitHubCallbackHandler(w http.ResponseWriter, r *http.Request) {
 	if frontendURL == "" {
 		frontendURL = "http://localhost:3000" // Default to local React dev server
 	}
-	http.Redirect(w, r, frontendURL, http.StatusFound)
+	http.Redirect(w, r, frontendURL+"?login_success=true", http.StatusFound)
 }
 
 // LoginHandler initiates the GitHub OAuth process
@@ -159,46 +159,46 @@ func LogoutHandler(w http.ResponseWriter, r *http.Request) {
 
 // UserHandler returns the current user's information
 func UserHandler(w http.ResponseWriter, r *http.Request) {
-    // 设置响应头，防止缓存
-    w.Header().Set("Content-Type", "application/json")
-    w.Header().Set("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate")
-    w.Header().Set("Pragma", "no-cache")
-    w.Header().Set("Expires", "0")
-    w.Header().Set("Surrogate-Control", "no-store")
+	// 设置响应头，防止缓存
+	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate")
+	w.Header().Set("Pragma", "no-cache")
+	w.Header().Set("Expires", "0")
+	w.Header().Set("Surrogate-Control", "no-store")
 
-    session, err := store.Get(r, "auth-session")
-    if err != nil {
-        log.Printf("Failed to get session: %v", err)
-        http.Error(w, "Failed to get session", http.StatusInternalServerError)
-        return
-    }
+	session, err := store.Get(r, "auth-session")
+	if err != nil {
+		log.Printf("Failed to get session: %v", err)
+		http.Error(w, "Failed to get session", http.StatusInternalServerError)
+		return
+	}
 
-    userID, ok := session.Values["user_id"].(int)
-    if !ok {
-        json.NewEncoder(w).Encode(map[string]interface{}{"user": nil})
-        return
-    }
+	userID, ok := session.Values["user_id"].(int)
+	if !ok {
+		json.NewEncoder(w).Encode(map[string]interface{}{"user": nil})
+		return
+	}
 
-    // 从数据库中获取用户信息
-    collection := Client.Database("your-db-name").Collection("users")
-    var user struct {
-        ID        int    `json:"id" bson:"github_id"`
-        Name      string `json:"name" bson:"name"`
-        Email     string `json:"email" bson:"email"`
-        Username  string `json:"username" bson:"username"`
-        AvatarURL string `json:"avatar_url" bson:"avatar_url"`
-    }
+	// 从数据库中获取用户信息
+	collection := Client.Database("your-db-name").Collection("users")
+	var user struct {
+		ID        int    `json:"id" bson:"github_id"`
+		Name      string `json:"name" bson:"name"`
+		Email     string `json:"email" bson:"email"`
+		Username  string `json:"username" bson:"username"`
+		AvatarURL string `json:"avatar_url" bson:"avatar_url"`
+	}
 
-    err = collection.FindOne(context.Background(), map[string]interface{}{"github_id": userID}).Decode(&user)
-    if err != nil {
-        if err == mongo.ErrNoDocuments {
-            json.NewEncoder(w).Encode(map[string]interface{}{"user": nil})
-        } else {
-            log.Printf("Failed to fetch user from database: %v", err)
-            http.Error(w, "Failed to fetch user information", http.StatusInternalServerError)
-        }
-        return
-    }
+	err = collection.FindOne(context.Background(), map[string]interface{}{"github_id": userID}).Decode(&user)
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			json.NewEncoder(w).Encode(map[string]interface{}{"user": nil})
+		} else {
+			log.Printf("Failed to fetch user from database: %v", err)
+			http.Error(w, "Failed to fetch user information", http.StatusInternalServerError)
+		}
+		return
+	}
 
-    json.NewEncoder(w).Encode(map[string]interface{}{"user": user})
+	json.NewEncoder(w).Encode(map[string]interface{}{"user": user})
 }

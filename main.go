@@ -64,6 +64,8 @@ func main() {
 	handlers.InitOAuth()
 	// Initialize session collection
 	handlers.InitSessionCollection(client)
+	// Initialize minutes collection
+	handlers.InitMinutesCollection(client)
 
 	// 设置路由
 	r := mux.NewRouter()
@@ -75,6 +77,9 @@ func main() {
 	r.HandleFunc("/api/sessions/{sessionId}/comments", handlers.PostCommentHandler).Methods("POST")
 	r.HandleFunc("/api/sessions/{sessionId}/comments", handlers.GetCommentsHandler).Methods("GET")
 	r.HandleFunc("/api/sessions/{sessionId}", handlers.DeleteSessionHandler).Methods("DELETE")
+	// Add new routes for meeting minutes
+	r.HandleFunc("/api/sessions/{sessionId}/minutes", handlers.GetMinutesHandler).Methods("GET")
+	r.HandleFunc("/api/sessions/{sessionId}/minutes", handlers.UpdateMinutesHandler).Methods("POST", "PUT")
 	// r.HandleFunc("/", handlers.HomeHandler).Methods("GET")
 	r.HandleFunc("/login", handlers.LoginHandler).Methods("GET")
 	r.HandleFunc("/auth/github/callback", handlers.GitHubCallbackHandler).Methods("GET")
@@ -108,10 +113,9 @@ func main() {
 	// 使用 CORS 中间件包装你的路由器
 	handler := c.Handler(r)
 
-	// 使用新的 handler 启动服务器
+	// 使用���的 handler 启动服务器
 	log.Printf("Server is running on port %s", port)
 	if err := http.ListenAndServe(":"+port, handler); err != nil {
 		log.Fatal(err)
 	}
-
 }
