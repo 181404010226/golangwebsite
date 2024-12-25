@@ -81,7 +81,7 @@ func main() {
 	r.HandleFunc("/api/sessions/{sessionId}/minutes", handlers.GetMinutesHandler).Methods("GET")
 	r.HandleFunc("/api/sessions/{sessionId}/minutes", handlers.UpdateMinutesHandler).Methods("POST", "PUT")
 	// r.HandleFunc("/", handlers.HomeHandler).Methods("GET")
-	r.HandleFunc("/login", handlers.LoginHandler).Methods("GET")
+	r.HandleFunc("/api/login", handlers.LoginHandler).Methods("GET")
 	r.HandleFunc("/auth/github/callback", handlers.GitHubCallbackHandler).Methods("GET")
 	r.HandleFunc("/logout", handlers.LogoutHandler).Methods("GET")
 

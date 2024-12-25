@@ -125,11 +125,29 @@ func GitHubCallbackHandler(w http.ResponseWriter, r *http.Request) {
 	if frontendURL == "" {
 		frontendURL = "http://localhost:3000" // Default to local React dev server
 	}
+	log.Printf("用户登录成功 - ID: %d, 用户名: %s, 邮箱: %s", user.ID, user.Username, user.Email)
 	http.Redirect(w, r, frontendURL+"?login_success=true", http.StatusFound)
 }
 
 // LoginHandler initiates the GitHub OAuth process
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
+
+	// 检查用户是否已经登录
+	session, _ := store.Get(r, "auth-session")
+	// 在开头检查并输出登录状态
+	if userID, ok := session.Values["user_id"].(int); ok {
+		log.Printf("用户 ID %d 已登录", userID)
+		frontendURL := os.Getenv("FRONTEND_URL")
+		if frontendURL == "" {
+			frontendURL = "http://localhost:3000"
+		}
+		http.Redirect(w, r, frontendURL+"?login_success=true", http.StatusFound)
+		return
+	} else {
+		log.Printf("用户未登录")
+	}
+
+	// 开始 OAuth 流程
 	url := oauth.AuthCodeURL("state", oauth2.AccessTypeOffline)
 	http.Redirect(w, r, url, http.StatusFound)
 }
